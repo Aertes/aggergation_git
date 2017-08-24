@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.citroen.wechat.mapper.ReportPluginMapper">
+    <resultMap id="PluginListResultMap" type="com.citroen.wechat.domain.PluginRecord">
+        <id column="pr_id" property="id" jdbcType="BIGINT"/>
+        <result column="pr_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <association property="plugin" javaType="com.citroen.wechat.domain.Plugin">
+            <id column="pl_id" property="id" jdbcType="BIGINT"/>
+            <result column="pl_name" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="campaign" javaType="com.citroen.wechat.domain.Campaign">
+            <id column="ca_id" property="id" jdbcType="BIGINT"/>
+            <result column="ca_name" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="dealer" javaType="com.citroen.ledp.domain.Dealer">
+            <result column="de_name" property="name" jdbcType="VARCHAR"/>
+            <association property="organization" javaType="com.citroen.ledp.domain.Organization">
+                <result column="org_name" property="name" jdbcType="VARCHAR"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <resultMap id="CampaignLeadResultMap" type="com.citroen.wechat.domain.CampaignLeads">
+        <id column="cl_id" property="id" jdbcType="BIGINT"/>
+        <result column="cl_name" property="leadsName" jdbcType="VARCHAR"/>
+        <result column="cl_phone" property="leadsPhone" jdbcType="VARCHAR"/>
+        <result column="pl_remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="cl_create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <association property="dealer" javaType="com.citroen.ledp.domain.Dealer">
+            <result column="de_name" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="largeArea" javaType="com.citroen.ledp.domain.Organization">
+            <result column="org_name" property="name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="campaign" javaType="com.citroen.wechat.domain.Campaign">
+            <result column="ca_name" property="name" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <sql id="QueryPluginSql">
+        <where>
+            <if test="cmpaignId != null">
+                AND ca.id = #{cmpaignId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            <if test="pluginId != null">
+                AND pl.id = #{pluginId}
+            </if>
+            <if test="pluginTypeId != null">
+                AND pt.id = #{pluginTypeId}
+            </if>
+            <if test="searchDateBegin != null and searchDateEnd != null">
+                <![CDATA[
+              AND
+                  ((ca.begindate >= #{searchDateBegin} AND ca.begindate <= #{searchDateEnd})
+              OR
+                  (ca.begindate <= #{searchDateBegin} AND ca.enddate >= #{searchDateBegin} AND ca.begindate <= #{searchDateEnd})
+              OR
+                  (ca.begindate <= #{searchDateBegin}  AND ca.begindate >= #{searchDateEnd}))
+            ]]>
+            </if>
+            <if test="searchDateBegin == null and searchDateEnd != null">
+                <![CDATA[
+              AND ca.begindate <= #{searchDateEnd}
+            ]]>
+            </if>
+            <if test="searchDateBegin != null and searchDateEnd == null">
+                <![CDATA[
+              AND ca.enddate >= #{searchDateBegin}
+            ]]>
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectPluginRecordList" resultMap="PluginListResultMap"
+            parameterType="com.citroen.wechat.form.ReportCampaignQuery">
+        SELECT pr.id AS pr_id, ca.begindate AS pr_create_date, pl.id AS pl_id, ca.id AS ca_id,
+        de.name AS de_name, org.name AS org_name, ca.name AS ca_name, pl.name AS pl_name
+        FROM t_plugin_record pr INNER JOIN t_campaign ca ON ca.id = pr.campaign
+        INNER JOIN t_dealer de ON pr.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON pr.plugin = pl.id
+        INNER JOIN t_plugin_type pt ON pl.type = pt.id
+        <include refid="QueryPluginSql"/>
+        ORDER BY ca.begindate ASC, ca.id ASC
+    </select>
+
+    <select id="selectPluginLeadChart" resultType="java.util.HashMap"
+            parameterType="com.citroen.wechat.form.ReportCampaignQuery">
+        SELECT SUBSTRING(DATE_FORMAT(cl.create_date, '%Y-%m-%d %h:%i:%s' ), 1, 10 ) AS day, count(cl.id) AS ct
+        FROM t_campaign_leads cl LEFT JOIN t_campaign ca ON ca.id = cl.campaign
+        INNER JOIN t_dealer de ON ca.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON cl.pluginid = pl.id
+        INNER JOIN t_plugin_type pt ON pl.type = pt.id
+        <include refid="QueryPluginSql"/>
+        GROUP BY SUBSTRING(DATE_FORMAT(cl.create_date, '%Y-%m-%d %h:%i:%s'), 1, 10)
+        ORDER BY SUBSTRING(DATE_FORMAT(cl.create_date, '%Y-%m-%d %h:%i:%s'), 1, 10)
+    </select>
+
+    <select id="selectPluginLeadCount" resultType="java.lang.Integer"
+            parameterType="com.citroen.wechat.form.ReportCampaignQuery">
+        SELECT count(cl.id) AS ct
+        FROM t_campaign_leads cl LEFT JOIN t_campaign ca ON ca.id = cl.campaign
+        INNER JOIN t_dealer de ON ca.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON cl.pluginid = pl.id
+        INNER JOIN t_plugin_type pt ON pl.type = pt.id
+        <include refid="QueryPluginSql"/>
+    </select>
+
+    <select id="selectPluginRecordChart" resultType="java.util.HashMap"
+            parameterType="com.citroen.wechat.form.ReportCampaignQuery">
+        SELECT SUBSTRING(DATE_FORMAT(cr.create_date, '%Y-%m-%d %h:%i:%s' ), 1, 10 ) AS day, count(cr.id) AS ct
+        FROM t_campaign_record cr LEFT JOIN t_campaign ca ON ca.id = cr.campaign
+        INNER JOIN t_dealer de ON ca.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON cr.pluginid = pl.id
+        INNER JOIN t_plugin_type pt ON pl.type = pt.id
+        <include refid="QueryPluginSql"/>
+        GROUP BY SUBSTRING(DATE_FORMAT(cr.create_date, '%Y-%m-%d %h:%i:%s'), 1, 10)
+        ORDER BY SUBSTRING(DATE_FORMAT(cr.create_date, '%Y-%m-%d %h:%i:%s'), 1, 10)
+    </select>
+
+    <select id="selectPluginRecordCount" resultType="java.lang.Integer"
+            parameterType="com.citroen.wechat.form.ReportCampaignQuery">
+        SELECT count(cr.id) AS ct
+        FROM t_campaign_record cr LEFT JOIN t_campaign ca ON ca.id = cr.campaign
+        INNER JOIN t_dealer de ON ca.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON cr.pluginid = pl.id
+        INNER JOIN t_plugin_type pt ON pl.type = pt.id
+        <include refid="QueryPluginSql"/>
+    </select>
+
+    <select id="selectPluginList" resultType="com.citroen.wechat.domain.Plugin" parameterType="java.lang.Integer">
+        SELECT id, name, code, type, request_url AS requetsUrl, thumb, status, count, sort, description, instruction, function
+        FROM t_plugin WHERE type = #{id}
+    </select>
+
+    <select id="selectCampaignLeadListByCampaignId" resultType="java.lang.Integer" resultMap="CampaignLeadResultMap">
+        SELECT cl.id AS cl_id, cl.name AS cl_name, cl.phone AS cl_phone, cl.create_date AS cl_create_date,
+        de.name AS de_name, org.name AS org_name, ca.name AS ca_name, pl.name AS pl_remark
+        FROM t_campaign ca INNER JOIN t_campaign_leads cl ON ca.id = cl.campaign
+        INNER JOIN t_dealer de ON ca.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        INNER JOIN t_plugin pl ON cl.pluginid = pl.id
+        <where>
+            <if test="id != null">
+                ca.id = #{id}
+            </if>
+        </where>
+    </select>
+</mapper>

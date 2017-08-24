@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.citroen.wechat.mapper.WinInfoMapper">
+    <resultMap id="baseResultMap" type="com.citroen.wechat.domain.WinInfo">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="source_type" property="sourceType" jdbcType="INTEGER"/>
+        <result column="source_name" property="sourceName" jdbcType="VARCHAR"/>
+        <result column="plugin" property="plugin.id" jdbcType="BIGINT"/>
+        <result column="coupon" property="coupon.id" jdbcType="BIGINT"/>
+        <result column="awards" property="awards.id" jdbcType="BIGINT"/>
+        <result column="awards_name" property="awardsName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <association property="dealer" javaType="com.citroen.ledp.domain.Dealer">
+            <result column="dealername" property="name" jdbcType="VARCHAR"/>
+            <association property="organization" javaType="com.citroen.ledp.domain.Organization">
+                <result column="orgname" property="name" jdbcType="VARCHAR"/>
+            </association>
+        </association>
+        <association property="plugin" javaType="com.citroen.wechat.domain.Plugin">
+            <result column="pluginName" property="name" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+
+    <sql id="baseCondictionSql">
+        <where>
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT('%', #{name}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND t.phone = #{phone}
+            </if>
+            <if test="status != null">
+                AND t.status = #{status}
+            </if>
+            <if test="sourceType != null">
+                AND t.source_type = #{sourceType}
+            </if>
+            <if test="org != null">
+                AND t.org = #{org}
+            </if>
+            <if test="dealer != null">
+                AND t.dealer = #{dealer}
+            </if>
+            <if test="beginDate != null">
+                <![CDATA[ AND t.create_time >= #{beginDate} ]]>
+            </if>
+            <if test="endDate != null">
+                <![CDATA[ AND t.create_time <= #{endDate} ]]>
+            </if>
+            <if test="userCode != null">
+                <![CDATA[ AND t.uuid = #{userCode} ]]>
+            </if>
+        </where>
+    </sql>
+
+    <select id="getWinInfos" resultMap="baseResultMap"
+            parameterType="com.citroen.wechat.form.WinInfoForm">
+        SELECT
+        t.id,
+        t.name,
+        t.phone,
+        t.uuid,
+        t.source_type,
+        t.source_id,
+        t.source_name,
+        t.plugin,
+        t.awards_name,
+        t.coupon,
+        t.awards,
+        t.create_time,
+        t.update_time,
+        t.status,
+        o.id AS orgid,
+        o.name AS orgname,
+        d.id AS dealerid,
+        d.name AS dealername,
+        p.name as pluginName
+        FROM
+        t_wininfo t
+        INNER JOIN t_dealer d ON d.id = t.dealer
+        INNER JOIN t_organization o ON o.id = t.org
+        LEFT JOIN t_plugin p on p.id = t.plugin
+        <include refid="baseCondictionSql"/>
+        ORDER BY t.create_time desc
+        limit #{currentPage},#{pageSize}
+    </select>
+
+    <select id="getWinInfoCount" resultType="java.lang.Integer"
+            parameterType="com.citroen.wechat.form.WinInfoForm">
+        SELECT
+        count(t.id)
+        FROM
+        t_wininfo t
+        INNER JOIN t_dealer d ON d.id = t.dealer
+        INNER JOIN t_organization o ON o.id = t.org
+        <include refid="baseCondictionSql"/>
+    </select>
+
+    <select id="get" resultMap="baseResultMap" parameterType="long">
+		SELECT
+			t.id,
+			t.name,
+			t.phone,
+			t.uuid,
+			t.source_type,
+			t.source_id,
+			t.source_name,
+			t.plugin,
+			t.awards_name,
+			t.coupon,
+			t.awards,
+			t.create_time,
+			t.update_time,
+			t.status,
+			o.id AS orgid,
+			o.name AS orgname,
+			d.id AS dealerid,
+			d.name AS dealername
+		FROM
+			t_wininfo t
+		INNER JOIN t_dealer d ON d.id = t.dealer
+		INNER JOIN t_organization o ON o.id = t.org
+		where t.id = #{id}
+	</select>
+
+    <update id="updateStatus" parameterType="long">
+		update t_wininfo set 
+		status = 1,
+		update_time = now()
+		where id = #{id}
+	</update>
+</mapper>

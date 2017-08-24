@@ -1,0 +1,105 @@
+.hj{
+	margin:20px 0;
+}
+.hj th, .hj td{
+	text-align: center;
+}
+.hj table{
+	border:1px solid #b2b2b2;
+}
+.hj th{	
+	border:1px solid #b2b2b2;
+}
+.canvas{
+	max-width: 1147px;
+	overflow: auto;
+}
+.bordertop{
+	border-top:1px solid #e5e5e5;
+	margin:10px 0;
+	padding:10px 0;
+}
+.lheight{
+	height: 30px;
+	line-height: 30px;
+}
+.sum .pip{
+	border:1px solid #b2b2b2;
+	padding:0 10px;
+	margin:10px 0;
+}
+.mr20{
+	margin-right: 20px;
+}
+.ralcolor{
+	color: #CC0000;
+	padding-left: 10px;
+}
+.combo-p .tree{
+	overflow: auto;
+	height:200px;
+}
+.tljhe th{
+	padding:5px 10px;
+}
+.tljhe td{
+	padding:5px 10px;
+	border-right: 1px solid #b2b2b2;
+	border-bottom: 1px solid #b2b2b2;
+}
+.datagrid-sort-icon{
+	display: none;
+}
+.hj th, .hj td{
+	padding:10px;
+}
+.underlist{
+	text-align: center;
+	padding:10px;
+}
+.detailcolor .jxs1{
+	background: #fa0000;
+}
+.detailcolor .jxs2{
+	background: #97bbcd;
+}
+
+
+/* 网点总览 */
+.overview{
+	margin: 20px 0 0;
+}
+.overview .infometion, .overview .inforelease{
+	width: 48%;
+}
+.infometion h2, .inforelease h2, .graph h2{
+	border-bottom:1px solid #e5e5e5;
+	height: 30px;
+	line-height: 30px;
+}
+.sprite{
+	background: url(images/sprite.png) no-repeat 0 0;
+	display: inline-block;
+}
+.infometion h2 em{
+	width: 16px;
+	height: 14px;
+	padding-right: 10px;
+}
+.inforelease h2 em, .graph h2 em{
+	background-position: -1px -20px;
+	width: 17px;
+	height: 14px;
+	padding-right: 10px;
+}
+.detial{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.detial p{
+	margin: 10px;
+}
+.graph{
+	margin:20px 0 0;
+}

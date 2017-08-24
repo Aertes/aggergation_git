@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<web-app>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+	<listener>
+	    <listener-class>com.citroen.ledp.interceptor.DxSessionListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter
+		</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- wechat api -->
+	<filter>
+		<filter-name>MsgCallbackFilter</filter-name>
+		<filter-class>com.citroen.wechat.api.servlet.MsgCallbackFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>MsgCallbackFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- wechat api --> 
+
+	<servlet>
+		<servlet-name>spring-dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath*:spring/spring-dispatcher.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>spring-dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>*.html</url-pattern>
+	</servlet-mapping>
+
+	<!-- wechat api -->    
+	    <servlet>
+	      <servlet-name>msgretrvauthServlet</servlet-name>
+	      <servlet-class>com.citroen.wechat.api.servlet.MsgRetrvAuthServlet</servlet-class>
+	  </servlet>
+	  <servlet-mapping>
+	      <servlet-name>msgretrvauthServlet</servlet-name>
+	      <url-pattern>/msgretrvauth</url-pattern>
+	  </servlet-mapping>
+	  <!-- wechat api -->  
+	<!-- websocket 
+	<servlet>
+		<servlet-name>chatServlet</servlet-name>
+		<servlet-class>com.citroen.wechat.websocket.chat.FansChatServlet</servlet-class>
+	</servlet>  
+	<servlet-mapping>
+		<servlet-name>chatServlet</servlet-name>
+		<url-pattern>/chatServlet</url-pattern>
+	</servlet-mapping>
+	websocket -->
+	<jsp-config>
+		<taglib>
+			<taglib-uri>/permission</taglib-uri>
+			<taglib-location>/WEB-INF/taglib/permission.tld</taglib-location>
+		</taglib>
+	</jsp-config>
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file></welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/WEB-INF/error_405.jsp</location>
+	</error-page>
+</web-app>

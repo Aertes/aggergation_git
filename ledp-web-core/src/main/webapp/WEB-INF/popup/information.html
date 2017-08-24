@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>东风长效媒体平台-咨讯管理</title>
+		<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../css/icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+		<link rel="stylesheet" type="text/css" href="../css/custom.css">
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../js/custom.js"></script>
+		<script type="text/javascript" src="../js/date.js"></script>
+		<!--[if lte IE 8]>
+			<script src="../excanvas.js"></script>
+		<![endif]-->
+	</head>
+	<body class="easyui-layout">
+		<div class="header" data-options="region:'north',border:false">
+			<div class="header clearFix">
+				<div class="floatL title">
+					东风雪铁龙经销商长效媒体管理大数据平台
+				</div>
+				<div class="floatR tr">
+					<a href="../member.html" title="admin">
+						<img alt="" src="../css/images/user_phone.png" style="width: 16px; height: 13px;" class="pr5" />admin
+					</a>
+					<a href="../#" title="用户手册">用户手册</a>
+					<div class="floatL">
+						<a href="../member.html" title="admin" class="admin pre">
+							<img alt="" src="../css/images/user_name.gif" style="width: 16px; height: 13px;" class="pr5" />设置
+						</a>
+					</div>
+					<a href="../#" title="">
+						<img alt="注销" src="../css/images/logout.gif" style="width: 16px; height: 13px;" class="pr5" />注销
+					</a>
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'west',split:false,title:false" class="leftMain">
+			<ul>
+				<li class="sidelist">
+					<a class="hoverBg first" href="../index.html" title="">首页</a>
+				</li>
+				<li class="sidelist">
+					<a class="hoverBg" href="" title="">数据管理</a>
+					<ul class="i-list">
+						<li>
+							<div>
+								<h1>媒体线索</h1>
+								<p>
+									<a href="../#" title="">线索列表</a>
+								</p>
+							</div>
+							<div>
+								<h1>客户管理</h1>
+								<p>
+									<a href="../#" title="">客户列表</a>
+								</p>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li class="sidelist activeBg">
+					<a class="hoverBg" href="" title="">咨讯管理</a>
+					<ul class="i-list">
+						<li>
+							<div>
+								<h1>咨讯管理</h1>
+								<p>
+									<a href="../#" title="">咨讯列表</a>
+								</p>
+								<p>
+									<a href="../#" title="">信息发布</a>
+								</p>
+								<p>
+									<a href="../#" title="">公告板</a>
+								</p>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li class="sidelist">
+					<a class="hoverBg" href="" title="">报表管理</a>
+					<ul class="i-list">
+						<li>
+							<div>
+								<h1>网点报表</h1>
+								<p>
+									<a href="../report/index.html" title="">网点报表-总览</a>
+								</p>
+								<p>
+									<a href="../report/alone.html" title="">网点报表-单一网点</a>
+								</p>
+								<p>
+									<a href="../report/mediatest.html" title="">网点报表-媒体分析</a>
+								</p>
+							</div>
+							<div>
+								<h1>大区报表</h1>
+								<p>
+									<a href="../report/dxindex.html" title="">大区报表-总览</a>
+								</p>
+								<p>
+									<a href="../report/dxalone.html" title="">大区报表-网点对比</a>
+								</p>
+								<p>
+									<a href="../report/dxdy.html" title="">大区报表-单一大区</a>
+								</p>
+								<p>
+									<a href="../report/mediatest.html" title="">大区报表-媒体分析</a>
+								</p>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li class="sidelist">
+					<a class="hoverBg" href="" title="">系统管理</a>
+					<ul class="i-list">
+						<li>
+							<div>
+								<h1>系统管理</h1>
+								<p>
+									<a href="../index.html" title="">组织管理</a>
+								</p>
+								<p>
+									<a href="../dealer/index.html" title="">网点管理</a>
+								</p>
+								<p>
+									<a href="../#" title="">用户管理</a>
+								</p>
+								<p>
+									<a href="../#" title="">角色管理</a>
+								</p>
+								<p>
+									<a href="../#" title="">日志管理</a>
+								</p>
+							</div>
+						</li>
+					</ul>
+				</li>
+				<li class="sidelist">
+					<a class="hoverBg" href="" title="">基础数据</a>
+					<ul class="i-list">
+						<li>
+							<div>
+								<h1>字典表管理</h1>
+								<p>
+									<a href="../#" title="">网点字典表</a>
+								</p>
+								<p>
+									<a href="../#" title="">车系字典表</a>
+								</p>
+								<p>
+									<a href="../#" title="">车型字典表</a>
+								</p>
+								<p>
+									<a href="../#" title="">线索字典表</a>
+								</p>
+								<p>
+									<a href="../#" title="">信息字典表</a>
+								</p>
+							</div>
+							<div>
+								<h1>接口管理</h1>
+								<p>
+									<a href="../#" title="">线索接口</a>
+								</p>
+								<p>
+									<a href="../#" title="">信息接口</a>
+								</p>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div data-options="region:'center',title:false" class="rightMain">
+			<div class="breaktop">
+				<span class="spriteIcon"><em></em>咨讯管理</span>
+				<span>&gt;&gt;</span>
+				<span>信息发布</span>
+			</div>
+			<div class="main clearfix">
+				<div class="detaillist ollright">
+					<div class="tih2 clearfix">
+						<p class="floatL">信息发布</p>
+						<p class="floatR tabsnav">
+							<a title="" href="mediatest.html">公告板</a>
+						</p>
+						<p class="floatR tabsnav">
+							<a title="" href="mediatest.html">咨讯列表</a>
+						</p>
+					</div>
+					<div class="infometionlist">
+						<div class="searchlist">
+							<p>发布媒体</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">全部</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">汽车之家</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">易车网</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>信息方式</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">优惠促销</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">新车信息</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">新闻资讯</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">新车信息</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">维修保养</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">招聘公告</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">店内活动</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>选择车系</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">POLO</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">朗境</a>
+								</li>
+								<li>
+									<input  type="radio" name="radio" />
+									<a href="../#" title="">朗行</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>选择加装车</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">不使用加装车</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">使用加装车</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>设置现车情况</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">现车充足</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">少量现车</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">无现车需要预订</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>设置现金优惠</p>
+							<ul class="clearFix">
+								<li>
+									<label>申请时间：</label>
+									<input style="width: 150px; height: 30px; display: none;" class="easyui-datetimebox combo-f textbox-f datetimebox-f">
+									<input type="radio" name="radio" />
+									<a href="../#" title="">优惠</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">加价</a>
+								</li>
+							</ul>
+						</div>
+						<div class="searchlist">
+							<p>请选择有效期</p>
+							<ul class="clearFix">
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">优惠</a>
+								</li>
+								<li>
+									<input type="radio" name="radio" />
+									<a href="../#" title="">加价</a>
+								</li>
+							</ul>
+						</div>
+						<div class="sumbit infosumbit">
+							<input type="button" value="下一步">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="w" class="easyui-window" title="消息框" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:500px;height:150px;padding:10px;">
+			<p>确认要删除么？</p>
+			<div data-options="region:'south',border:false" class="delbtn">
+				<a class="easyui-linkbutton btnstyle" data-options="iconCls:'icon-ok'" href="javascript:void(0)" style="width:100px">确认</a>
+				<a class="easyui-linkbutton cancel" data-options="iconCls:'icon-cancel'" href="javascript:void(0)" onclick="$('#w').window('close')" style="width:100px">取消</a>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function del(){
+				$('#w').window('open')
+			};
+		</script>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+

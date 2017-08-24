@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.citroen.wechat.mapper.ReportFansMapper">
+    <resultMap id="PublicNoResultMap" type="com.citroen.wechat.domain.PublicNo">
+        <id column="pn_id" property="id" jdbcType="BIGINT"/>
+        <result column="pn_nick_name" property="nick_name" jdbcType="VARCHAR"/>
+        <association property="dealer" javaType="com.citroen.ledp.domain.Dealer">
+            <result column="de_name" property="name" jdbcType="VARCHAR"/>
+            <association property="organization" javaType="com.citroen.ledp.domain.Organization">
+                <result column="org_name" property="name" jdbcType="VARCHAR"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <resultMap id="FansReportResultMap" type="com.citroen.wechat.domain.FansReport">
+        <id column="fr_id" property="id" jdbcType="BIGINT"/>
+        <result column="fr_ref_date" property="refDate" jdbcType="DATE"/>
+        <result column="fr_new_user" property="newUser" jdbcType="INTEGER"/>
+        <result column="fr_cancel_user" property="cancelUser" jdbcType="INTEGER"/>
+        <result column="fr_cumulate_user" property="cumulateUser" jdbcType="INTEGER"/>
+        <association property="publicNo" javaType="com.citroen.wechat.domain.PublicNo">
+            <id column="pn_id" property="id" jdbcType="BIGINT"/>
+            <result column="pn_nick_name" property="nick_name" jdbcType="VARCHAR"/>
+            <association property="dealer" javaType="com.citroen.ledp.domain.Dealer">
+                <id column="de_id" property="id" jdbcType="BIGINT"/>
+                <result column="de_name" property="name" jdbcType="VARCHAR"/>
+                <association property="organization" javaType="com.citroen.ledp.domain.Organization">
+                    <id column="org_id" property="id" jdbcType="BIGINT"/>
+                    <result column="org_name" property="name" jdbcType="VARCHAR"/>
+                </association>
+            </association>
+        </association>
+    </resultMap>
+
+    <resultMap id="FansReportCharResultMap" type="com.citroen.wechat.domain.FansReport">
+        <result column="fr_ref_date" property="refDate" jdbcType="DATE"/>
+        <result column="fr_new_user" property="newUser" jdbcType="INTEGER"/>
+        <result column="fr_cancel_user" property="cancelUser" jdbcType="INTEGER"/>
+        <result column="fr_cumulate_user" property="cumulateUser" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="selectInfoSql">
+        SELECT fr.id AS fr_id, fr.ref_date AS fr_ref_date, fr.new_user AS fr_new_user, fr.cancel_user AS fr_cancel_user,
+        fr.cumulate_user AS fr_cumulate_user, fr.public_no AS fr_public_no, pn.nick_name AS pn_nick_name
+        FROM t_fans_report fr LEFT JOIN t_publicno pn ON fr.public_no = pn.id
+    </sql>
+
+    <sql id="selectAllSql">
+        SELECT fr.id AS fr_id, fr.ref_date AS fr_ref_date, fr.new_user AS fr_new_user,
+        fr.cancel_user AS fr_cancel_user,
+        fr.cumulate_user AS fr_cumulate_user, fr.public_no AS pn_id, pn.nick_name AS pn_nick_name,
+        de.id AS de_id, de.name AS de_name,
+        org.id AS org_id, org.name AS org_name
+        FROM t_fans_report fr LEFT JOIN t_publicno pn ON fr.public_no = pn.id
+        INNER JOIN t_dealer de ON pn.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+    </sql>
+
+    <insert id="insert" parameterType="com.citroen.wechat.domain.FansReport" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        INSERT INTO t_fans_report
+            (ref_date, new_user, cancel_user, cumulate_user,cancel_old_user, cancel_new_user, public_no)
+        VALUES
+            (#{refDate}, #{newUser}, #{cancelUser}, #{cumulateUser}, #{cancelOldUser}, #{cancelNewUser}, #{publicNo.id})
+    </insert>
+
+    <select id="selectByPrimaryKey" resultMap="FansReportResultMap" parameterType="java.lang.Long">
+        <include refid="selectInfoSql"/>
+        WHERE fr.id = #{id}
+    </select>
+
+    <select id="selectListByByQuery" resultMap="FansReportResultMap"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        <include refid="selectAllSql"/>
+        <where>
+            <if test="publicNoId != null">
+                AND fr.public_no = #{publicNoId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            <if test="searchDateBegin != null">
+                <![CDATA[
+					AND #{searchDateBegin} <= fr.ref_date
+				]]>
+            </if>
+            <if test="searchDateEnd != null">
+                <![CDATA[
+					AND fr.ref_date < #{searchDateEnd}
+				]]>
+            </if>
+        </where>
+        ORDER BY fr.ref_date ASC
+    </select>
+
+    <select id="selectCharByByQuery" resultMap="FansReportCharResultMap"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT fr.ref_date AS fr_ref_date, SUM(fr.new_user) AS fr_new_user, SUM(fr.cancel_user) AS fr_cancel_user,
+        fr.cumulate_user AS fr_cumulate_user
+        FROM t_fans_report fr LEFT JOIN t_publicno pn ON fr.public_no = pn.id
+        INNER JOIN t_dealer de ON pn.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        <where>
+            <if test="publicNoId != null">
+                AND fr.public_no = #{publicNoId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            <if test="searchDateBegin != null">
+                <![CDATA[
+					AND #{searchDateBegin} <= fr.ref_date
+				]]>
+            </if>
+            <if test="searchDateEnd != null">
+                <![CDATA[
+					AND fr.ref_date < #{searchDateEnd}
+				]]>
+            </if>
+        </where>
+        GROUP BY fr.ref_date
+        ORDER BY fr.ref_date ASC
+    </select>
+
+    <select id="selectTotalRowsByQuery" resultType="int" parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT COUNT(fr.id)
+        FROM t_fans_report fr LEFT JOIN t_publicno pn ON fr.public_no = pn.id
+        INNER JOIN t_dealer de ON pn.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        <where>
+            <if test="publicNoId != null">
+                AND fr.public_no = #{publicNoId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            <if test="searchDateBegin != null">
+                <![CDATA[
+					AND #{searchDateBegin} <= fr.ref_date
+				]]>
+            </if>
+            <if test="searchDateEnd != null">
+                <![CDATA[
+					AND fr.ref_date < #{searchDateEnd}
+				]]>
+            </if>
+        </where>
+        ORDER BY fr.ref_date ASC
+    </select>
+
+    <select id="selectTotalFansByPublicNo" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT count(id) FROM t_fans WHERE publicno = #{id} AND subscribe = 1
+    </select>
+
+    <select id="selectTotalFansByQuery" resultType="java.lang.Integer"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT count(t.id) FROM t_fans t INNER JOIN t_publicno pn ON t.publicno = pn.id
+        INNER JOIN t_dealer de ON pn.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        <where>
+            <if test="publicNoId != null">
+                AND t.publicno = #{publicNoId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            AND subscribe = 1
+        </where>
+    </select>
+
+    <select id="selectNewUserListByQuery" resultType="string"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT openid FROM t_fans_log
+        WHERE publicno = #{publicNoId} AND <![CDATA[ subscribe_time >= #{searchDateBegin} AND subscribe_time<= #{searchDateEnd} ]]>
+        GROUP BY openid HAVING SUM(subscribe) = 1
+    </select>
+
+    <select id="selectCancelNewUserListByQuery" resultType="string"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT openid FROM t_fans_log fan
+        WHERE publicno = #{publicNoId} AND <![CDATA[ subscribe_time >= #{searchDateBegin} AND subscribe_time<= #{searchDateEnd} ]]>
+            AND NOT EXISTS( SELECT openid FROM t_fans_log fans
+            WHERE fan.openid = fans.openid AND publicno = #{publicNoId} AND <![CDATA[ subscribe_time <= #{searchDateBegin} ]]>
+            GROUP BY openid HAVING SUM(subscribe) = 1)
+        GROUP BY openid HAVING SUM(subscribe) = 0
+    </select>
+
+    <select id="selectCancelOldUserListByQuery" resultType="string"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT openid FROM t_fans_log
+        WHERE publicno = #{publicNoId} AND <![CDATA[ subscribe_time >= #{searchDateBegin} AND subscribe_time< #{searchDateEnd} ]]>
+        GROUP BY openid HAVING SUM(subscribe) = -1
+    </select>
+
+    <select id="selectCumulateUserByQuery" resultType="int"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT COUNT(t.id) FROM t_fans t INNER JOIN t_publicno pn ON t.publicno = pn.id
+        INNER JOIN t_dealer de ON pn.dealer = de.id
+        INNER JOIN t_organization org ON de.organization = org.id
+        <where>
+            <if test="publicNoId != null">
+                AND t.publicno = #{publicNoId}
+            </if>
+            <if test="dealerId != null">
+                AND de.id = #{dealerId}
+            </if>
+            <if test="orgId != null">
+                AND org.id = #{orgId}
+            </if>
+            AND subscribe = 1
+        </where>
+    </select>
+
+
+    <select id="selectPublicNoList" resultMap="PublicNoResultMap"
+            parameterType="com.citroen.wechat.form.ReportFansQuery">
+        SELECT pn.id AS pn_id, pn.nick_name AS pn_nick_name FROM t_publicno pn
+        <where>
+            <if test="orgId != null">
+                AND pn.org = #{orgId}
+            </if>
+            <if test="dealerId != null">
+                AND pn.dealer = #{dealerId}
+            </if>
+        </where>
+    </select>
+</mapper>

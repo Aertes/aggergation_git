@@ -1,0 +1,47 @@
+<html>
+	<head>
+	<script type="text/javascript">
+		var ws;
+		function createWebSocket(fansId){
+			var url ='ws://localhost:8080/ledp-web-core/chatServlet?fansId='+fansId;
+			if (window.WebSocket) {
+				ws = new WebSocket(url);
+			} else if (window.MozWebSocket) {
+				ws = new MozWebSocket(url);
+			} else {
+				alert('浏览器版本太低,不支持webSocket');
+				console.log('浏览器版本太低,不支持webSocket');
+			}
+			alert(ws);
+			ws.onopen = function(){
+				console.log('onopen!');
+			}
+			ws.onclose = function(){
+				console.log('close!');
+			}
+			ws.onmessage = function(event) {
+				console.log(event.data);
+				var message_window = document.getElementById("message_window");
+				message_window.value +=event.data;
+			}
+		}
+
+		function sendMessage(){
+			var message_send = document.getElementById("message_send");
+			var message = message_send.value;
+			ws.send(message);
+		}
+
+		function initWs(){
+			createWebSocket('1');
+		}
+	</script>
+	</head>
+	<body onload="initWs();">
+		<textarea rows="6" cols="22" id="message_window"></textarea><br/>
+		<input type="text" value=""  id="message_send"/><br/>
+		<input type="button" value="发送..." onClick="sendMessage();"/>
+	</body>
+
+</html>
+
